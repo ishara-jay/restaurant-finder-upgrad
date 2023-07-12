@@ -1,13 +1,22 @@
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RestaurantService {
     private static List<Restaurant> restaurants = new ArrayList<>();
 
-    public Restaurant findRestaurantByName(String restaurantName){
-        return null;
-        //DELETE ABOVE STATEMENT AND WRITE CODE HERE
+    public Restaurant findRestaurantByName(String restaurantName) throws restaurantNotFoundException {
+        AtomicReference<Restaurant> restaurant = new AtomicReference<>();
+        restaurants.forEach(restaurant1 -> {
+            if(restaurant1.getName().equals(restaurantName))
+                restaurant.set(restaurant1);
+
+        });
+        if(restaurant.get() == null) {
+            throw new restaurantNotFoundException(restaurantName);
+        }
+        return restaurant.get();
     }
 
 
@@ -19,6 +28,9 @@ public class RestaurantService {
 
     public Restaurant removeRestaurant(String restaurantName) throws restaurantNotFoundException {
         Restaurant restaurantToBeRemoved = findRestaurantByName(restaurantName);
+        if(restaurantToBeRemoved == null) {
+            throw new restaurantNotFoundException(restaurantName);
+        }
         restaurants.remove(restaurantToBeRemoved);
         return restaurantToBeRemoved;
     }
